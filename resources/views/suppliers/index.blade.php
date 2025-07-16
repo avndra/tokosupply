@@ -65,16 +65,16 @@
                     </div>
                     <div class="supplier-action d-flex justify-content-center gap-2 mt-3">
                         <a href="{{ route('suppliers.show', $supplier->id) }}" class="btn btn-outline-light btn-sm" title="Lihat Detail">
-                            <i class="fas fa-eye"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
                         </a>
                         <a href="{{ route('suppliers.edit', $supplier->id) }}" class="btn btn-outline-warning btn-sm" title="Edit Supplier">
-                            <i class="fas fa-edit"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-pencil" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                         </a>
                         <form action="{{ route('suppliers.destroy', $supplier->id) }}" method="POST" class="d-inline-block">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Yakin ingin menghapus supplier ini?')" title="Hapus Supplier">
-                                <i class="fas fa-trash"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-trash" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6v-2a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="m10 11v6"/><path d="m14 11v6"/></svg>
                             </button>
                         </form>
                     </div>

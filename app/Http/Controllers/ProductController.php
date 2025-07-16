@@ -9,9 +9,13 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with(['toko', 'supplier'])->get();
+        $query = Product::with(['toko', 'supplier']);
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+        $products = $query->get();
         return view('products.index', compact('products'));
     }
 
@@ -56,7 +60,9 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        return view('products.edit', compact('product'));
+        $tokos = \App\Models\Toko::all();
+        $suppliers = \App\Models\Supplier::all();
+        return view('products.edit', compact('product', 'tokos', 'suppliers'));
     }
 
     /**

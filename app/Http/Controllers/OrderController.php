@@ -13,7 +13,9 @@ class OrderController extends Controller
     }
     public function create()
     {
-        return view('orders.create');
+        $users = \App\Models\User::all();
+        $products = \App\Models\Product::where('status', 'active')->get();
+        return view('orders.create', compact('users', 'products'));
     }
     public function store(Request $request)
     {
@@ -21,7 +23,21 @@ class OrderController extends Controller
             'user_id' => 'required|exists:users,id',
             'status' => 'required|in:pending,processing,completed,cancelled',
         ]);
-        $order = Order::create($request->all());
+        $order = Order::create($request->only(['user_id', 'status']));
+        $qtys = $request->input('qty', []);
+        foreach ($qtys as $product_id => $qty) {
+            if ($qty > 0) {
+                $product = \App\Models\Product::find($product_id);
+                if ($product) {
+                    $order->orderedItems()->create([
+                        'product_id' => $product_id,
+                        'quantity' => $qty,
+                        'price_per_item' => $product->price,
+                        'ordered_at' => now(),
+                    ]);
+                }
+            }
+        }
         return redirect()->route('orders.show', $order)
                          ->with('success', 'Order created successfully.');
     }

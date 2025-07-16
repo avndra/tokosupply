@@ -13,7 +13,9 @@ class TokoController extends Controller
     }
     public function create()
     {
-        return view('tokos.create');
+        $users = \App\Models\User::all();
+        $cities = \App\Models\City::all();
+        return view('tokos.create', compact('users', 'cities'));
     }
     public function store(Request $request)
     {
