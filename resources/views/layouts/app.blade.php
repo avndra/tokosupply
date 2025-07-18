@@ -86,13 +86,12 @@
                                 <i class="fas fa-user-circle me-1"></i> {{ Auth::user()->username ?? Auth::user()->name }}
                             </a>
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="{{ route('logout') }}"
-                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    <i class="fas fa-sign-out-alt me-1"></i> {{ __('Logout') }}
-                                </a>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                    @csrf
-                                </form>
+                                @if(Auth::check())
+                                    <form action="{{ route('logout') }}" method="POST" style="display:inline">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt me-1"></i> {{ __('Logout') }}</button>
+                                    </form>
+                                @endif
                             </div>
                         </li>
                     @endguest
