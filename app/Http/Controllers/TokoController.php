@@ -34,7 +34,13 @@ class TokoController extends Controller
     }
     public function edit(Toko $toko)
     {
-        return view('tokos.edit', compact('toko'));
+        $user = \Illuminate\Support\Facades\Auth::user();
+        if ($user->email !== 'admin@example.com' && $toko->owner_id !== $user->id) {
+            return redirect()->route('tokos.show', $toko->id)->with('error', 'Anda tidak berhak mengedit toko ini.');
+        }
+        $users = \App\Models\User::all();
+        $cities = \App\Models\City::all();
+        return view('tokos.edit', compact('toko', 'users', 'cities'));
     }
     public function update(Request $request, Toko $toko)
     {

@@ -10,11 +10,19 @@ class TokoSeeder extends Seeder
     public function run(): void
     {
         $john = User::where('username', 'john_doe')->first();
-        $surabayaCityId = City::where('name', 'Surabaya')->first()->id;
-        Toko::create([
-            'owner_id' => $john->id,
-            'name_toko' => 'Toko John Surabaya',
-            'city_code' => $surabayaCityId,
-        ]);
+        if (!$john) {
+            $john = User::first(); // fallback user
+        }
+        $surabayaCity = City::where('name', 'Surabaya')->first();
+        if (!$surabayaCity) {
+            $surabayaCity = City::first(); // fallback city
+        }
+        if ($john && $surabayaCity) {
+            Toko::create([
+                'owner_id' => $john->id,
+                'name_toko' => 'Toko John Surabaya',
+                'city_code' => $surabayaCity->id,
+            ]);
+        }
     }
 }

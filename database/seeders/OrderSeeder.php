@@ -1,17 +1,37 @@
 <?php
+
 namespace Database\Seeders;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+
 use App\Models\Order;
-use App\Models\User;
+use App\Models\OrderedItem;
+use App\Models\Product;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
 class OrderSeeder extends Seeder
 {
     public function run(): void
     {
-        $jane = User::where('username', 'jane_doe')->first();
-        Order::create([
-            'user_id' => $jane->id,
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        DB::table('ordered_items')->truncate();
+        DB::table('orders')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+
+        $products = Product::inRandomOrder()->take(3)->get();
+
+        $order = Order::create([
+            'user_id' => 1,
             'status' => 'pending',
         ]);
+
+        foreach ($products as $product) {
+            OrderedItem::create([
+                'order_id' => $order->id,
+                'product_id' => $product->id,
+                'quantity' => 1,
+                'price_per_item' => $product->price,
+                'ordered_at' => now(),
+            ]);
+        }
     }
 }

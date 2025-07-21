@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Produk')
+@section('title', isset($isMyProducts) && $isMyProducts ? 'Produk Toko Saya' : 'Daftar Produk')
 
 @section('content')
 <style>
@@ -137,15 +137,17 @@
     }
 </style>
 <div class="product-list-bg">
-    <form method="GET" action="{{ route('products.index') }}" class="product-toolbar mb-3" style="width:100%;">
+    <form method="GET" action="{{ isset($isMyProducts) && $isMyProducts ? route('my-products') : route('products.index') }}" class="product-toolbar mb-3" style="width:100%;">
         <div class="position-relative">
             <input type="text" name="search" value="{{ request('search') }}" class="product-search" placeholder="Search product name...">
             <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#bfc9da;" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
         </div>
+        @can('create', App\Models\Product::class)
         <a href="{{ route('products.create') }}" class="btn btn-primary">
             <svg xmlns="http://www.w3.org/2000/svg" class="me-1" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 5v14m7-7H5"/></svg>
             Add product
         </a>
+        @endcan
     </form>
     <div class="container-fluid px-0">
         @forelse ($products as $product)
@@ -160,7 +162,11 @@
                             <span class="badge bg-secondary" style="font-size:0.95rem;">Inactive</span>
                         @endif
                     </div>
+                    @if(!(isset($isMyProducts) && $isMyProducts))
                     <div class="product-category">Category<br><span class="fw-bold">{{ $product->toko->name_toko ?? '-' }}</span></div>
+                    @else
+                    <div class="product-category">Toko Saya<br><span class="fw-bold">{{ $toko->name_toko ?? '-' }}</span></div>
+                    @endif
                     <div class="product-meta">
                         <div><span class="product-meta-label">Price</span> <span>${{ number_format($product->price,0) }}</span></div>
                         <div><span class="product-meta-label">Stock</span> <span>{{ $product->stock }}</span></div>
@@ -177,12 +183,15 @@
                                 Preview
                             </a>
                         </li>
+                        @can('update', $product)
                         <li>
                             <a class="dropdown-item" href="{{ route('products.edit', $product->id) }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-pencil" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                                 Edit
                             </a>
                         </li>
+                        @endcan
+                        @can('delete', $product)
                         <li>
                             <form action="{{ route('products.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus produk ini?')">
                                 @csrf
@@ -193,6 +202,7 @@
                                 </button>
                             </form>
                         </li>
+                        @endcan
                     </ul>
                 </div>
             </div>

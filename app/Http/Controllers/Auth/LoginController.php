@@ -25,9 +25,25 @@ class LoginController extends Controller
     /**
      * Where to redirect users after login.
      *
-     * @var string
+     * @return string
      */
-    protected $redirectTo = '/home';
+    protected function redirectTo()
+    {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        // Pastikan $user adalah instance Eloquent User
+        if ($user && $user instanceof \App\Models\User) {
+            if ($user->tokos()->exists()) {
+                return route('my-products');
+            }
+        } else if ($user) {
+            // Fallback: cari ulang user sebagai Eloquent
+            $eloUser = \App\Models\User::find($user->id);
+            if ($eloUser && $eloUser->tokos()->exists()) {
+                return route('my-products');
+            }
+        }
+        return '/products';
+    }
 
     /**
      * Create a new controller instance.

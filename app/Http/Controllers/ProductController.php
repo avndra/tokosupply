@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class ProductController extends Controller
 {
@@ -17,6 +18,32 @@ class ProductController extends Controller
         }
         $products = $query->get();
         return view('products.index', compact('products'));
+    }
+
+    /**
+     * Show products belonging to the logged-in user's toko only.
+     */
+    public function myProducts(Request $request)
+    {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        if ($user && $user instanceof \App\Models\User) {
+            $toko = $user->tokos()->first();
+        } else if ($user) {
+            $eloUser = \App\Models\User::find($user->id);
+            $toko = $eloUser ? $eloUser->tokos()->first() : null;
+        } else {
+            $toko = null;
+        }
+        if (!$toko) {
+            return redirect('/')->with('error', 'Anda belum memiliki toko.');
+        }
+        $query = Product::with(['toko', 'supplier'])->where('toko_id', $toko->id);
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+        $products = $query->get();
+        $isMyProducts = true;
+        return view('products.index', compact('products', 'isMyProducts', 'toko'));
     }
 
     /**
