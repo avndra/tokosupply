@@ -1,4 +1,4 @@
-# 🛒 Mini Toko Supply Project
+# Mini Toko Supply Project
 
 Laravel 12 based simple store & supply management project. This is a **Phase 1 & 2 only mini project** with basic admin CRUD and API features.
 
