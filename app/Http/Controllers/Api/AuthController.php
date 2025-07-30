@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -30,15 +32,21 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $user = $request->user();
-        if (!$user) {
-            return response()->json(['message' => 'Not authenticated'], 401);
+        $tokenValue = $request->bearerToken();
+
+        if (!$tokenValue) {
+            return response()->json(['message' => 'Token not provided'], 401);
         }
-        $token = $user->currentAccessToken();
+
+        $token = PersonalAccessToken::findToken($tokenValue);
+
         if (!$token) {
-            return response()->json(['message' => 'No active token'], 400);
+            return response()->json(['message' => 'Invalid token'], 401);
         }
-        $token->delete();
+
+        $user = $token->tokenable;
+        $user->tokens()->delete();
+
         return response()->json(['message' => 'Logged out successfully']);
     }
 }
